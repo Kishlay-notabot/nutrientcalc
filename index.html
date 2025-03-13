@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .inline-btn {
+            width: auto;
+            padding: 8px;
+            margin-left: 5px;
+            background: #28a745;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+        }
+        .clear-btn:hover {
+            background-color: #b52b3a;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Nutrition Calculator</h2>
+
+        <label>⚖️ Reference gram value</label>
+        <div style="display: flex;">
+            <input type="number" id="per_x_grams" placeholder="Enter X grams">
+            <button class="inline-btn" onclick="setDefault()">100g</button>
+        </div>
+
+        <label>🔹 Energy per Xg (kcal)</label>
+        <input type="number" id="energy" placeholder="Enter kcal">
+
+        <label>🥩 Protein per Xg (g)</label>
+        <input type="number" id="protein" placeholder="Enter protein">
+
+        <label>🍞 Carbs per Xg (g)</label>
+        <input type="number" id="carbs" placeholder="Enter carbs">
+
+        <label>🧈 Fat per Xg (g)</label>
+        <input type="number" id="fat" placeholder="Enter fat">
+
+        <label>📏 Weight to Calculate for (g)</label>
+        <input type="number" id="weight" placeholder="Enter weight in grams">
+
+        <button onclick="calculate()">Calculate</button>
+        <button class="clear-btn" onclick="clearFields()">Clear</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function setDefault() {
+            document.getElementById("per_x_grams").value = 100;
+        }
+
+        function calculate() {
+            let perXGrams = parseFloat(document.getElementById("per_x_grams").value);
+            let weight = parseFloat(document.getElementById("weight").value);
+            let fields = ["energy", "protein", "carbs", "fat"];
+            let results = [];
+
+            if (isNaN(perXGrams) || isNaN(weight) || perXGrams <= 0 || weight <= 0) {
+                document.getElementById("result").innerHTML = "❌ Please enter valid numbers.";
+                return;
+            }
+
+            let factor = weight / perXGrams;
+
+            fields.forEach(field => {
+                let value = parseFloat(document.getElementById(field).value);
+                if (!isNaN(value)) {
+                    let calculatedValue = (value * factor).toFixed(2);
+                    let label = field === "energy" ? "🔹 kcal" :
+                                field === "protein" ? "🥩 protein" :
+                                field === "carbs" ? "🍞 carbs" : "🧈 fat";
+                    results.push(`${calculatedValue} ${label}`);
+                }
+            });
+
+            if (results.length === 0) {
+                document.getElementById("result").innerHTML = "❌ Please enter at least one nutrient value.";
+                return;
+            }
+
+            document.getElementById("result").innerHTML = `For <b>${weight}g</b>: <br>` + results.join("<br>");
+        }
+
+        function clearFields() {
+            ["energy", "protein", "carbs", "fat", "per_x_grams", "weight"].forEach(id => {
+                document.getElementById(id).value = "";
+            });
+            document.getElementById("result").innerHTML = "";
+        }
+    </script>
+
+</body>
+</html>
